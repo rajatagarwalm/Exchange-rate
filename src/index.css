@@ -1,0 +1,31 @@
+body {
+  max-width: 100%;
+  margin: auto;
+  padding: 0;
+  /* background-color: blueviolet; */
+  font-family: "Roboto", Montserrat, Open Sans;
+  /* background-image: url("https://ak2.picdn.net/shutterstock/videos/21851902/thumb/1.jpg"); */
+
+  /* background-image: url("https://ak3.picdn.net/shutterstock/videos/20769583/thumb/1.jpg"); */
+
+  background-image: url("http://ak6.picdn.net/shutterstock/videos/11128949/thumb/1.jpg");
+
+  /* Animated backgrounds:
+
+  background-image: url("https://thumbs.gfycat.com/ParallelTiredBarasinga-size_restricted.gif");
+
+  background-image: url("http://subseaexplorer.net/wp-content/uploads/2016/06/stock-market-loss-lawyer-header-video.gif"); */
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  /*For parallax effect */
+  height: 100%;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* code {
+  font-family: sans-serif, monospace;
+} */
