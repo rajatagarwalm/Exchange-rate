@@ -32,7 +32,7 @@ class ExchangeRatesApp extends React.Component {
   // setting the retrieved data to state
   componentDidMount() {
     FetchProfile().then((data) => {
-      const defValue = data.rates.USD;
+      const defValue = data.rates;
       // console.log(defValue);
       this.setState((prevState) => ({
         isLoaded: true,
