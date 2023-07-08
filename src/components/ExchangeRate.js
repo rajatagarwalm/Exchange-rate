@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { fetchExchangeRatesFromBaseCurrency } from '../service/apiCalls';
 import './ExchangeRate.css';
 
 const ExchangeRate = () => {
@@ -9,11 +10,11 @@ const ExchangeRate = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchExchangeRates = async () => {
+        const fetchRates = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
-                setExchangeRate(response.data.rates);
+                const rates = await fetchExchangeRatesFromBaseCurrency(baseCurrency);
+                setExchangeRate(rates);
                 setLoading(false);
             } catch (error) {
                 setError('Error fetching exchange rates. Please try again later.');
@@ -21,7 +22,7 @@ const ExchangeRate = () => {
             }
         };
 
-        fetchExchangeRates();
+        fetchRates();
     }, [baseCurrency]);
 
     const handleBaseCurrencyChange = (event) => {

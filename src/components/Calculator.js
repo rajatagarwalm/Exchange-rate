@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Calculator.css'; // Import the CSS file
+import { fetchExchangeRates } from '../service/apiCalls';
+import './Calculator.css';
 
 const Calculator = () => {
     const [amount, setAmount] = useState('');
@@ -11,10 +11,9 @@ const Calculator = () => {
     const [exchangeRates, setExchangeRates] = useState({});
 
     useEffect(() => {
-        const fetchExchangeRates = async () => {
+        const fetchRates = async () => {
             try {
-                const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
-                const { rates } = response.data;
+                const rates = await fetchExchangeRates();
                 setExchangeRates(rates);
                 const options = Object.keys(rates);
                 setCurrencyOptions(options);
@@ -25,7 +24,7 @@ const Calculator = () => {
             }
         };
 
-        fetchExchangeRates();
+        fetchRates();
     }, []);
 
     const handleAmountChange = (e) => {
@@ -51,14 +50,14 @@ const Calculator = () => {
     };
 
     return (
-        <div className="calculator-container"> {/* Apply a container class */}
+        <div className="calculator-container">
             <h2>Exchange Rate Calculator</h2>
             <form onSubmit={handleConvert}>
-                <div className="form-row"> {/* Apply a class to the form row */}
+                <div className="form-row">
                     <label htmlFor="amount">Amount:</label>
                     <input type="number" id="amount" value={amount} onChange={handleAmountChange} />
                 </div>
-                <div className="form-row"> {/* Apply a class to the form row */}
+                <div className="form-row">
                     <label htmlFor="from-currency">From Currency:</label>
                     <select id="from-currency" value={fromCurrency} onChange={handleFromCurrencyChange}>
                         {currencyOptions.map((currency) => (
@@ -68,7 +67,7 @@ const Calculator = () => {
                         ))}
                     </select>
                 </div>
-                <div className="form-row"> {/* Apply a class to the form row */}
+                <div className="form-row">
                     <label htmlFor="to-currency">To Currency:</label>
                     <select id="to-currency" value={toCurrency} onChange={handleToCurrencyChange}>
                         {currencyOptions.map((currency) => (

@@ -1,12 +1,23 @@
 import axios from 'axios';
 
-export const fetchCurrencyOptions = async () => {
+export const fetchExchangeRates = async () => {
     try {
         const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
-        const currencyOptions = Object.keys(response.data.rates);
-        return currencyOptions;
+        const { rates } = response.data;
+        return rates;
     } catch (error) {
-        console.error('Error fetching currency options:', error);
-        return [];
+        console.error('Error fetching exchange rates:', error);
+        throw error;
     }
 };
+
+export const fetchExchangeRatesFromBaseCurrency = async (baseCurrency) => {
+    try {
+      const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+      const { rates } = response.data;
+      return rates;
+    } catch (error) {
+      console.error('Error fetching exchange rates:', error);
+      throw error;
+    }
+  };
