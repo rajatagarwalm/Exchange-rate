@@ -1,0 +1,22 @@
+Header {
+    width: 80%;
+    background-color: #180157;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.current-time {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #c0bcbc;
+}
+
+nav {
+    color: #fff;
+}
+
+nav h1 {
+    margin: 0;
+}
