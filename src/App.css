@@ -16,7 +16,7 @@
   flex: 1;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .app-container {
     padding: 10px;
   }

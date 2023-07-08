@@ -26,7 +26,7 @@ const Header = () => {
             <header>
                 <nav>
                     <hr />
-                    <h1>Exchange Rate Calculator</h1>
+                    <h1>Exchange Rates</h1>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
