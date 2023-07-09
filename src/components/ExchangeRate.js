@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { fetchExchangeRatesFromBaseCurrency } from '../service/apiCalls';
 import './ExchangeRate.css';
 
