@@ -18,6 +18,5 @@ jobs:
       - name: Build and push backend Docker image
         run: |
           docker build -t exchange_rate .
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
           docker tag exchange_rate:latest 764568376426.dkr.ecr.us-west-2.amazonaws.com/exchange_rate:latest
           docker push 764568376426.dkr.ecr.us-west-2.amazonaws.com/exchange_rate:latest
