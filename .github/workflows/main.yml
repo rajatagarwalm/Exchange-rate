@@ -1,5 +1,5 @@
 name: Build and Push Docker Image to ECR
-'on':
+on:
   push:
     branches:
       - main
@@ -18,5 +18,5 @@ jobs:
       - name: Build and push backend Docker image
         run: |
           docker build -t exchange_rate .
-          docker tag exchange_rate ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/${{secrets.ECR_REPO_NAME}}:v1
-          docker push ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/${{secrets.ECR_REPO_NAME}}:v1
+          docker tag exchange_rate ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:v1
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:v1
