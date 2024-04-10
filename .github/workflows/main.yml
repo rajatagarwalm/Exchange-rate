@@ -15,7 +15,13 @@ jobs:
         with:
           username: '${{ secrets.DOCKER_USERNAME }}'
           password: '${{ secrets.DOCKER_PASSWORD }}'
-      - name: Build and push backend Docker image
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Build and push Docker image
         run: |
           docker build -t exchange_rate .
           docker tag exchange_rate:latest 764568376426.dkr.ecr.us-west-2.amazonaws.com/exchange_rate:latest
