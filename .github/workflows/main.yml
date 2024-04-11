@@ -30,5 +30,6 @@ jobs:
           ECR_REPOSITORY: exchange_rate
           IMAGE_TAG: exchange_rate
         run: |
+          echo "$ECR_REGISTRY"
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
