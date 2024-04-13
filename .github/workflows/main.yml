@@ -42,7 +42,7 @@ jobs:
       - name: Pull and run trivy docker image
         run: |
           docker pull aquasec/trivy:latest
-          docker run --no-tty -it aquasec/trivy:latest
+          docker run --no-tty aquasec/trivy:latest
 
       - name: Run Trivy for vulnerability scanning
         run: |
