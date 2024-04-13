@@ -39,13 +39,6 @@ jobs:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Install Trivy
-        run: |
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.20.0/trivy_0.20.0_Linux-64bit.tar.gz
-          tar zxvf trivy_0.20.0_Linux-64bit.tar.gz
-          sudo mv trivy /usr/local/bin/
-          trivy --version
-
       - name: Run Trivy for vulnerability scanning
         run: |
           # Run Trivy scan and capture the output
