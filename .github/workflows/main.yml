@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   build_and_push_image:
-    name: Build, Tag, and Push Docker Image
+    name: Build, Tag, Scan and Push Docker Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,7 +42,7 @@ jobs:
       - name: Pull and run trivy docker image
         run: |
           docker pull aquasec/trivy:latest
-          docker run --no-tty aquasec/trivy:latest
+          docker run -t aquasec/trivy:latest
 
       - name: Run Trivy for vulnerability scanning
         run: |
