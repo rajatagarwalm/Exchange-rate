@@ -33,8 +33,7 @@ jobs:
         run: echo "::set-output name=TRIMMED_SHA::${GITHUB_SHA::5}"
 
       - name: Create Image 
-        run: | 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        run: |
           docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }} .
 
       - name: Install jq
