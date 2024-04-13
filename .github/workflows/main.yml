@@ -5,33 +5,61 @@ on:
       - main
 jobs:
   build_and_push_image:
-    name: Build and Push Docker Image
+    name: Build, Tag, and Push Docker Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: '${{ secrets.DOCKER_USERNAME }}'
           password: '${{ secrets.DOCKER_PASSWORD }}'
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+
       - name: Trim GitHub SHA to 5 characters
         id: trim-sha
         run: echo "::set-output name=TRIMMED_SHA::${GITHUB_SHA::5}"
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: exchange_rate
-          IMAGE_TAG: exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}
+
+      - name: Create Image 
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }} .
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run Trivy for vulnerability scanning
+        run: |
+          # Run Trivy scan and capture the output
+          trivy_output=$(docker run --rm aquasec/trivy -f json ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }})
+
+          # Parse the Trivy scan output for vulnerabilities
+          critical_vulnerabilities=$(echo $trivy_output | jq '.[].Vulnerabilities | map(select(.Severity == "CRITICAL")) | length')
+          high_vulnerabilities=$(echo $trivy_output | jq '.[].Vulnerabilities | map(select(.Severity == "HIGH")) | length')
+
+          # Display the number of critical and high vulnerabilities found
+          echo "Critical vulnerabilities found: $critical_vulnerabilities"
+          echo "High vulnerabilities found: $high_vulnerabilities"
+
+          # If critical or high vulnerabilities are found, fail the build
+          if [[ $critical_vulnerabilities -gt 0 || $high_vulnerabilities -gt 0 ]]; then
+            echo "Critical or high vulnerabilities found. Fail the build."
+            exit 1
+          else
+            echo "No critical or high vulnerabilities found. Build can proceed."
+          fi
+
+      - name: Build, tag, and push image to Amazon ECR
+        if: success()
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}
