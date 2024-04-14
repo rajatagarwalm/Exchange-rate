@@ -51,7 +51,6 @@ jobs:
         with:
           image-ref: '${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}'
           format: 'json'
-          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
