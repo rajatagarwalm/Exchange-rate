@@ -45,10 +45,21 @@ jobs:
           echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
           sudo apt-get update && sudo apt-get install -y trivy jq
 
-      - name: Run Trivy for vulnerability scanning
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        id: scan-image
+        with:
+          image-ref: '${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}'
+          format: 'json'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: process trivy response
         run: |
           # Run Trivy scan and capture the output
-          trivy_output=$(trivy --ignore-unfixed --vuln-type os,library --severity CRITICAL,HIGH --format json --no-progress "${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}")
+          trivy_output=${{ steps.scan-image.outputs }}
 
           # Parse the Trivy scan output for vulnerabilities
           critical_vulnerabilities=$(echo $trivy_output | jq '.[].Vulnerabilities | map(select(.Severity == "CRITICAL")) | length')
