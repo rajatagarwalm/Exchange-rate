@@ -58,7 +58,7 @@ jobs:
       - name: process trivy response
         run: |
           # Run Trivy scan and capture the output
-          trivy_output=${{ steps.scan-image.outputs }}
+          trivy_output=${{ steps.scan-image.outputs.scan_results }}
 
           # Parse the Trivy scan output for vulnerabilities
           critical_vulnerabilities=$(echo $trivy_output | jq '.[].Vulnerabilities | map(select(.Severity == "CRITICAL")) | length')
