@@ -1,12 +1,15 @@
 name: Build and Push Docker Image to ECR
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build_and_push_image:
     name: Build, Tag, Scan and Push Docker Image
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -36,13 +39,16 @@ jobs:
         run: |
           docker build -t ${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }} .
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Install Trivy and jq
+        run: |
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update && sudo apt-get install -y trivy jq
 
       - name: Run Trivy for vulnerability scanning
         run: |
           # Run Trivy scan and capture the output
-          trivy_output=$(docker run --rm aquasec/trivy -f json "${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}")
+          trivy_output=$(trivy --exit-code 1 --ignore-unfixed --vuln-type os,library --severity CRITICAL,HIGH --format json --no-progress "${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}")
 
           # Parse the Trivy scan output for vulnerabilities
           critical_vulnerabilities=$(echo $trivy_output | jq '.[].Vulnerabilities | map(select(.Severity == "CRITICAL")) | length')
