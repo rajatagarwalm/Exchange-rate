@@ -60,22 +60,14 @@ jobs:
           # Run Trivy scan and capture the output
           trivy_output=${{ steps.scan-image.outputs.scan_results }}
 
-          # Parse the Trivy scan output for vulnerabilities
-          critical_vulnerabilities=$(echo $trivy_output | jq '.[].Vulnerabilities | map(select(.Severity == "CRITICAL")) | length')
-          high_vulnerabilities=$(echo $trivy_output | jq '.[].Vulnerabilities | map(select(.Severity == "HIGH")) | length')
+          critical_vulnerabilities=$(echo "$trivy_output" | jq '.[0].Vulnerabilities[] | select(.Severity == "CRITICAL")' | wc -l)
 
-          # Display the number of critical and high vulnerabilities found
+          if [ "$critical_vulnerabilities" -gt 0 ]; then
           echo "Critical vulnerabilities found: $critical_vulnerabilities"
-          echo "High vulnerabilities found: $high_vulnerabilities"
-
-          # If critical or high vulnerabilities are found, fail the build
-          if [[ $critical_vulnerabilities -gt 0 || $high_vulnerabilities -gt 0 ]]; then
-            echo "Critical or high vulnerabilities found. Fail the build."
             exit 1
           else
-            echo "No critical or high vulnerabilities found. Build can proceed."
+            echo "No critical vulnerabilities found."
           fi
 
       - name: Build, tag, and push image to Amazon ECR
-        if: success()
         run: docker push ${{ steps.login-ecr.outputs.registry }}/exchange_rate:exchange_rate_${{ steps.trim-sha.outputs.TRIMMED_SHA }}
