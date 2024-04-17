@@ -55,10 +55,11 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
           ignore-file: '.trivyignore'
+          output: 'trivy_results.json'
 
       - name: Check Trivy scan results
         run: |
-          if grep -q '"Severity":"CRITICAL"' "${{ steps.scan-image.outputs.trivy-json }}" ; then
+          if grep -q '"Severity":"CRITICAL"' "trivy_results.json" ; then
             echo "Critical vulnerabilities found, stopping workflow."
             exit 1
           fi
