@@ -56,22 +56,11 @@ jobs:
           severity: 'CRITICAL,HIGH'
           ignore-file: '.trivyignore'
 
-      - name: process trivy response
+      - name: Check Trivy scan results
         run: |
-          # Run Trivy scan and capture the output
-          trivy_output=${{ steps.scan-image.outputs.scan_results }}
-
-          critical_vulnerabilities=$(echo "$trivy_output" | jq '.[0].Vulnerabilities[] | select(.Severity == "CRITICAL")' | wc -l)
-          high_vulnerabilities=$(echo "$trivy_output" | jq '.[0].Vulnerabilities[] | select(.Severity == "HIGH")' | wc -l)
-
-          if [ "$critical_vulnerabilities" -gt 0 ]; then
-          echo "Critical vulnerabilities found: $critical_vulnerabilities"
+          if grep -q '"Severity":"CRITICAL"' "${{ steps.scan-image.outputs.trivy-json }}" ; then
+            echo "Critical vulnerabilities found, stopping workflow."
             exit 1
-          elif [ "$high_vulnerabilities" -gt 0 ]; then
-            echo "High severity vulnerabilities found: $high_vulnerabilities"
-            exit 1
-          else
-            echo "No critical vulnerabilities found."
           fi
 
       - name: Build, tag, and push image to Amazon ECR
