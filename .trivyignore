@@ -1,0 +1,16 @@
+# Ignore all vulnerabilities in a specific package
+node.js
+curl
+git
+git-man
+libopenexr-3-1-30
+libopenexr-dev
+@babel/traverse
+
+# Ignore specific vulnerabilities
+CVE-2024-2398
+CVE-2022-48622
+CVE-2023-6879
+CVE-2023-45853
+CVE-2023-45133
+CVE-2023-5841
