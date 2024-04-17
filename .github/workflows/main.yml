@@ -54,6 +54,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          ignore-file: '.trivyignore'
           output: 'trivy_results.json'
 
       - name: Check Trivy scan results
