@@ -36,12 +36,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
+      - name: Check if bucket exists
+        id: check_if_bucket_exist
+        run: |
+          if aws s3api head-bucket --bucket "exchange-rate-unique123" 2>/dev/null; then
+              echo "Bucket 'exchange-rate-unique123' already exists."
+              echo "::set-output name=bucket_exists::true"
+          else
+              echo "::set-output name=bucket_exists::false"
+          fi
+
       - name: Create S3 bucket
+        if: steps.check_if_bucket_exist.outputs.bucket_exists == 'false'
         run: |
           aws s3api create-bucket --bucket exchange-rate-unique123 --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
 
       - name: copy to s3
-        run: aws s3 sync ./build/. s3://exchange_rates
+        run: aws s3 sync ./build/. s3://exchange-rate-unique123
 
       # - name: Login to Amazon ECR
       #   id: login-ecr
