@@ -49,7 +49,7 @@ jobs:
       - name: Create DynamoDB table
         run: |
           aws dynamodb create-table \
-            --table-name exchange_rate_table \
+            --table-name exchange_rate_table_1 \
             --attribute-definitions \
               AttributeName=currency,AttributeType=S \
             --key-schema \
@@ -59,12 +59,12 @@ jobs:
 
       - name: Wait for table creation
         run: |
-          aws dynamodb wait table-exists --table-name exchange_rate_table --region us-west-2
+          aws dynamodb wait table-exists --table-name exchange_rate_table_1 --region us-west-2
   
       - name: Put item into DynamoDB table
         run: |
           aws dynamodb put-item \
-            --table-name exchange_rate_table \
+            --table-name exchange_rate_table_1 \
             --item '{"currency": {"S": "USD"}, "rate": {"N": "1.0"}}' \
             --region us-west-2
 
